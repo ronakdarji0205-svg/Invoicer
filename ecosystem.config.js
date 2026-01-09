@@ -1,40 +1,22 @@
 module.exports = {
   apps: [
     {
-      name: 'pro-invoicer-backend',
-      script: './backend/server.js',
-      cwd: __dirname,
-      instances: 1,
-      exec_mode: 'fork',
-      autorestart: true,
-      watch: false,
-      max_memory_restart: '500M',
-      env: {
-        NODE_ENV: 'production',
-        PORT: 5000
-      },
-      error_file: './logs/backend-error.log',
-      out_file: './logs/backend-out.log',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
-      merge_logs: true,
-      time: true
-    },
-    {
-      name: 'pro-invoicer-frontend',
+      name: 'pro-invoicer-dev',
       script: 'npm',
-      args: 'run preview',
+      args: 'run dev:all',
       cwd: __dirname,
       instances: 1,
       exec_mode: 'fork',
       autorestart: true,
-      watch: false,
-      max_memory_restart: '300M',
+      watch: ['src', 'backend'],
+      max_memory_restart: '1G',
       env: {
-        NODE_ENV: 'production',
-        PORT: 6001
+        NODE_ENV: 'development',
+        PORT: 5000,
+        VITE_PORT: 6001
       },
-      error_file: './logs/frontend-error.log',
-      out_file: './logs/frontend-out.log',
+      error_file: './logs/dev-error.log',
+      out_file: './logs/dev-out.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       merge_logs: true,
       time: true
