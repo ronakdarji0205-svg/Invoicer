@@ -1,0 +1,5 @@
+{
+  "name": "Pro-Invoicer GST",
+  "description": "A professional GST tax invoice generator with local storage for vendors, items, and company profiles. Features high-fidelity PDF-ready layouts and searchable directories.",
+  "requestFramePermissions": []
+}

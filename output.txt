@@ -1,0 +1,719 @@
+
+ronak-admin@ronika-nas:~$ sudo docker exec immich_server_bhavika printenv | grep -i MACHINE_LEARNING_URL || true
+ronak-admin@ronika-nas:~$ sudo docker exec immich_server_bhavika printenv | grep -i IMMICH_VERSION\|IMMICH_BUILD || true
+ronak-admin@ronika-nas:~$ sudo docker exec immich_server_bhavika sh -c 'curl -sv http://immich_machine_learning_bhavika:3003/api/health 2>&1 | sed -n "1,200p"' || true
+p://immich_machine_learning_bhavika:3003/ 2>&1 | sed -n "1,200p"' || true* Host immich_machine_learning_bhavika:3003 was resolved.
+* IPv6: (none)
+* IPv4: 172.25.0.4
+*   Trying 172.25.0.4:3003...
+* Connected to immich_machine_learning_bhavika (172.25.0.4) port 3003
+* using HTTP/1.x
+> GET /api/health HTTP/1.1
+> Host: immich_machine_learning_bhavika:3003
+> User-Agent: curl/8.14.1
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 404 Not Found
+< date: Sun, 04 Jan 2026 17:52:34 GMT
+< server: uvicorn
+< content-length: 22
+< content-type: application/json
+< 
+{ [22 bytes data]
+* Connection #0 to host immich_machine_learning_bhavika left intact
+{"detail":"Not Found"}ronak-admin@ronika-nas:~$ sudo docker exec immich_server_bhavika sh -c 'curl -sv http://i_bhavika:3003/ 2>&1 | sed -n "1,200p"' || true
+* Host immich_machine_learning_bhavika:3003 was resolved.
+* IPv6: (none)
+* IPv4: 172.25.0.4
+*   Trying 172.25.0.4:3003...
+* Connected to immich_machine_learning_bhavika (172.25.0.4) port 3003
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: immich_machine_learning_bhavika:3003
+> User-Agent: curl/8.14.1
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< date: Sun, 04 Jan 2026 17:52:35 GMT
+< server: uvicorn
+< content-length: 23
+< content-type: application/json
+< 
+{ [23 bytes data]
+* Connection #0 to host immich_machine_learning_bhavika left intact
+{"message":"Immich ML"}ronak-admin@ronika-nas:~$ sudo docker exec immich_machine_learning_bhavika sh -c 'ls -lae'cache /cache/* || true
+/cache:
+total 0
+dr-xr-xr-x 1 1026 users  44 Apr 23  2025 .
+drwxr-xr-x 1 root root  162 Dec 20 08:03 ..
+dr-xr-xr-x 1 root root   32 Apr 23  2025 clip
+dr-xr-xr-x 1 root root   18 Apr 23  2025 facial-recognition
+
+/cache/clip:
+total 0
+dr-xr-xr-x 1 root root   32 Apr 23  2025 .
+dr-xr-xr-x 1 1026 users  44 Apr 23  2025 ..
+dr-xr-xr-x 1 root root  178 Apr 23  2025 ViT-B-32__openai
+
+/cache/facial-recognition:
+total 0
+dr-xr-xr-x 1 root root   18 Apr 23  2025 .
+dr-xr-xr-x 1 1026 users  44 Apr 23  2025 ..
+dr-xr-xr-x 1 root root  156 Apr 23  2025 buffalo_l
+ronak-admin@ronika-nas:~$ sudo docker logs --since "24h" immich_machine_learning_bhavika | tail -n 200
+ronak-admin@ronika-nas:~$ sudo docker logs --since "6h" immich_server_bhavika | grep -iE "AssetDetectFaces|facial-recognition|face|SmartSearch|machine" -n || sudo docker logs immich_server_bhavika --tail 200
+[Nest] 23  - 01/04/2026, 5:31:21 PM   ERROR [Api:ErrorInterceptor~vknccx59] Unknown error: Error: Machine learning request '{"clip":{"textual":{"modelName":"ViT-B-32__openai","options":{"language":"en-null"}}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"textual":{"modelName":"ViT-B-32__openai","options":{"language":"en-null"}}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeText (/usr/src/app/server/dist/repositories/machine-learning.repository.js:140:26)
+    at async SearchService.searchSmart (/usr/src/app/server/dist/services/search.service.js:94:29)
+[Nest] 23  - 01/04/2026, 5:31:30 PM   ERROR [Api:ErrorInterceptor~czdr7fm7] Unknown error: Error: Machine learning request '{"clip":{"textual":{"modelName":"ViT-B-32__openai","options":{"language":"en-null"}}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"textual":{"modelName":"ViT-B-32__openai","options":{"language":"en-null"}}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeText (/usr/src/app/server/dist/repositories/machine-learning.repository.js:140:26)
+1:[Nest] 23  - 01/04/2026, 5:31:21 PM    WARN [Api:MachineLearningRepository~vknccx59] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+2:[Nest] 23  - 01/04/2026, 5:31:30 PM    WARN [Api:MachineLearningRepository~czdr7fm7] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at async SearchService.searchSmart (/usr/src/app/server/dist/services/search.service.js:94:29)
+[Nest] 7  - 01/04/2026, 5:40:00 PM   ERROR [Microservices:{"source":"upload","id":"98034034-a915-46b1-be35-a8d887e8139f"}] Unable to run job handler (AssetDetectFaces): Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.detectFaces (/usr/src/app/server/dist/repositories/machine-learning.repository.js:126:26)
+    at async PersonService.handleDetectFaces (/usr/src/app/server/dist/services/person.service.js:243:52)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:40:00 PM   ERROR [Microservices:{"source":"upload","id":"a83e45cc-dacf-41d0-b159-f4865a50fbbc"}] Unable to run job handler (AssetDetectFaces): Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.detectFaces (/usr/src/app/server/dist/repositories/machine-learning.repository.js:126:26)
+    at async PersonService.handleDetectFaces (/usr/src/app/server/dist/services/person.service.js:243:52)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:40:00 PM   ERROR [Microservices:{"source":"upload","id":"98034034-a915-46b1-be35-a8d887e8139f"}] Unable to run job handler (Ocr): Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:40:00 PM   ERROR [Microservices:{"source":"upload","id":"ff5f58e3-2a69-447a-b962-8286b79c7413"}] Unable to run job handler (SmartSearch): Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeImage (/usr/src/app/server/dist/repositories/machine-learning.repository.js:135:26)
+    at async SmartInfoService.handleEncodeClip (/usr/src/app/server/dist/services/smart-info.service.js:91:27)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:40:00 PM   ERROR [Microservices:{"source":"upload","id":"98034034-a915-46b1-be35-a8d887e8139f"}] Unable to run job handler (SmartSearch): Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeImage (/usr/src/app/server/dist/repositories/machine-learning.repository.js:135:26)
+    at async SmartInfoService.handleEncodeClip (/usr/src/app/server/dist/services/smart-info.service.js:91:27)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:40:00 PM   ERROR [Microservices:{"source":"upload","id":"ff5f58e3-2a69-447a-b962-8286b79c7413"}] Unable to run job handler (AssetDetectFaces): Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.detectFaces (/usr/src/app/server/dist/repositories/machine-learning.repository.js:126:26)
+7:[Nest] 7  - 01/04/2026, 5:40:00 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+8:[Nest] 7  - 01/04/2026, 5:40:00 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+9:[Nest] 7  - 01/04/2026, 5:40:00 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+10:[Nest] 7  - 01/04/2026, 5:40:00 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+11:[Nest] 7  - 01/04/2026, 5:40:00 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+12:[Nest] 7  - 01/04/2026, 5:40:00 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at async PersonService.handleDetectFaces (/usr/src/app/server/dist/services/person.service.js:243:52)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:40:03 PM   ERROR [Microservices:{"source":"upload","id":"a83e45cc-dacf-41d0-b159-f4865a50fbbc"}] Unable to run job handler (SmartSearch): Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeImage (/usr/src/app/server/dist/repositories/machine-learning.repository.js:135:26)
+    at async SmartInfoService.handleEncodeClip (/usr/src/app/server/dist/services/smart-info.service.js:91:27)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:40:03 PM   ERROR [Microservices:{"source":"upload","id":"ff5f58e3-2a69-447a-b962-8286b79c7413"}] Unable to run job handler (Ocr): Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+15:[Nest] 7  - 01/04/2026, 5:40:03 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+16:[Nest] 7  - 01/04/2026, 5:40:03 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+17:[Nest] 7  - 01/04/2026, 5:40:06 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+[Nest] 7  - 01/04/2026, 5:40:06 PM   ERROR [Microservices:{"source":"upload","id":"a83e45cc-dacf-41d0-b159-f4865a50fbbc"}] Unable to run job handler (Ocr): Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+20:[Nest] 7  - 01/04/2026, 5:41:58 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+[Nest] 7  - 01/04/2026, 5:41:58 PM   ERROR [Microservices:{"source":"upload","id":"b8c27150-e237-4169-8047-b9d0a47b5281"}] Unable to run job handler (AssetDetectFaces): Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.detectFaces (/usr/src/app/server/dist/repositories/machine-learning.repository.js:126:26)
+    at async PersonService.handleDetectFaces (/usr/src/app/server/dist/services/person.service.js:243:52)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+21:[Nest] 7  - 01/04/2026, 5:41:58 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+22:[Nest] 7  - 01/04/2026, 5:41:58 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+23:[Nest] 7  - 01/04/2026, 5:41:58 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+24:[Nest] 7  - 01/04/2026, 5:41:58 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+25:[Nest] 7  - 01/04/2026, 5:41:58 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:41:58 PM   ERROR [Microservices:{"source":"upload","id":"0523e552-922a-4283-86e6-a554c8812378"}] Unable to run job handler (SmartSearch): Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+26:[Nest] 7  - 01/04/2026, 5:41:58 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeImage (/usr/src/app/server/dist/repositories/machine-learning.repository.js:135:26)
+    at async SmartInfoService.handleEncodeClip (/usr/src/app/server/dist/services/smart-info.service.js:91:27)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:41:58 PM   ERROR [Microservices:{"source":"upload","id":"ff6ba0de-1226-4aee-89ba-1b3c53a62330"}] Unable to run job handler (AssetDetectFaces): Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.detectFaces (/usr/src/app/server/dist/repositories/machine-learning.repository.js:126:26)
+    at async PersonService.handleDetectFaces (/usr/src/app/server/dist/services/person.service.js:243:52)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:41:58 PM   ERROR [Microservices:{"source":"upload","id":"76e43ecb-01a4-4be5-a94b-9563af9f6550"}] Unable to run job handler (AssetDetectFaces): Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.detectFaces (/usr/src/app/server/dist/repositories/machine-learning.repository.js:126:26)
+    at async PersonService.handleDetectFaces (/usr/src/app/server/dist/services/person.service.js:243:52)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:41:58 PM   ERROR [Microservices:{"source":"upload","id":"b8c27150-e237-4169-8047-b9d0a47b5281"}] Unable to run job handler (Ocr): Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:41:58 PM   ERROR [Microservices:{"source":"upload","id":"b8c27150-e237-4169-8047-b9d0a47b5281"}] Unable to run job handler (SmartSearch): Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeImage (/usr/src/app/server/dist/repositories/machine-learning.repository.js:135:26)
+    at async SmartInfoService.handleEncodeClip (/usr/src/app/server/dist/services/smart-info.service.js:91:27)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:41:58 PM   ERROR [Microservices:{"source":"upload","id":"0523e552-922a-4283-86e6-a554c8812378"}] Unable to run job handler (AssetDetectFaces): Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.detectFaces (/usr/src/app/server/dist/repositories/machine-learning.repository.js:126:26)
+    at async PersonService.handleDetectFaces (/usr/src/app/server/dist/services/person.service.js:243:52)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:01 PM   ERROR [Microservices:{"source":"upload","id":"0523e552-922a-4283-86e6-a554c8812378"}] Unable to run job handler (Ocr): Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+29:[Nest] 7  - 01/04/2026, 5:42:01 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+30:[Nest] 7  - 01/04/2026, 5:42:01 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:01 PM   ERROR [Microservices:{"source":"upload","id":"76e43ecb-01a4-4be5-a94b-9563af9f6550"}] Unable to run job handler (SmartSearch): Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeImage (/usr/src/app/server/dist/repositories/machine-learning.repository.js:135:26)
+    at async SmartInfoService.handleEncodeClip (/usr/src/app/server/dist/services/smart-info.service.js:91:27)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:01 PM   ERROR [Microservices:{"source":"upload","id":"ff6ba0de-1226-4aee-89ba-1b3c53a62330"}] Unable to run job handler (SmartSearch): Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeImage (/usr/src/app/server/dist/repositories/machine-learning.repository.js:135:26)
+    at async SmartInfoService.handleEncodeClip (/usr/src/app/server/dist/services/smart-info.service.js:91:27)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:01 PM   ERROR [Microservices:{"source":"upload","id":"75cbf65d-fc7f-48a4-8923-d78652d73c9b"}] Unable to run job handler (AssetDetectFaces): Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.detectFaces (/usr/src/app/server/dist/repositories/machine-learning.repository.js:126:26)
+    at async PersonService.handleDetectFaces (/usr/src/app/server/dist/services/person.service.js:243:52)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+31:[Nest] 7  - 01/04/2026, 5:42:01 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+32:[Nest] 7  - 01/04/2026, 5:42:01 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+[Nest] 7  - 01/04/2026, 5:42:04 PM   ERROR [Microservices:{"source":"upload","id":"ff6ba0de-1226-4aee-89ba-1b3c53a62330"}] Unable to run job handler (Ocr): Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+33:[Nest] 7  - 01/04/2026, 5:42:04 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+34:[Nest] 7  - 01/04/2026, 5:42:04 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:04 PM   ERROR [Microservices:{"source":"upload","id":"75cbf65d-fc7f-48a4-8923-d78652d73c9b"}] Unable to run job handler (SmartSearch): Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeImage (/usr/src/app/server/dist/repositories/machine-learning.repository.js:135:26)
+    at async SmartInfoService.handleEncodeClip (/usr/src/app/server/dist/services/smart-info.service.js:91:27)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:07 PM   ERROR [Microservices:{"source":"upload","id":"76e43ecb-01a4-4be5-a94b-9563af9f6550"}] Unable to run job handler (Ocr): Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+35:[Nest] 7  - 01/04/2026, 5:42:07 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+36:[Nest] 7  - 01/04/2026, 5:42:10 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+[Nest] 7  - 01/04/2026, 5:42:10 PM   ERROR [Microservices:{"source":"upload","id":"75cbf65d-fc7f-48a4-8923-d78652d73c9b"}] Unable to run job handler (Ocr): Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+37:[Nest] 7  - 01/04/2026, 5:42:10 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+38:[Nest] 7  - 01/04/2026, 5:42:10 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+39:[Nest] 7  - 01/04/2026, 5:42:10 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+40:[Nest] 7  - 01/04/2026, 5:42:10 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:10 PM   ERROR [Microservices:{"source":"upload","id":"e351d03c-a7c2-4c5f-bb70-d64fe629266f"}] Unable to run job handler (SmartSearch): Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeImage (/usr/src/app/server/dist/repositories/machine-learning.repository.js:135:26)
+    at async SmartInfoService.handleEncodeClip (/usr/src/app/server/dist/services/smart-info.service.js:91:27)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:10 PM   ERROR [Microservices:{"source":"upload","id":"e351d03c-a7c2-4c5f-bb70-d64fe629266f"}] Unable to run job handler (AssetDetectFaces): Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.detectFaces (/usr/src/app/server/dist/repositories/machine-learning.repository.js:126:26)
+    at async PersonService.handleDetectFaces (/usr/src/app/server/dist/services/person.service.js:243:52)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:10 PM   ERROR [Microservices:{"source":"upload","id":"45ff1421-dbc4-41fc-991a-dd53e973cc8f"}] Unable to run job handler (SmartSearch): Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+Error: Machine learning request '{"clip":{"visual":{"modelName":"ViT-B-32__openai"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.encodeImage (/usr/src/app/server/dist/repositories/machine-learning.repository.js:135:26)
+    at async SmartInfoService.handleEncodeClip (/usr/src/app/server/dist/services/smart-info.service.js:91:27)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:10 PM   ERROR [Microservices:{"source":"upload","id":"45ff1421-dbc4-41fc-991a-dd53e973cc8f"}] Unable to run job handler (AssetDetectFaces): Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+Error: Machine learning request '{"facial-recognition":{"detection":{"modelName":"buffalo_l","options":{"minScore":0.7}},"recognition":{"modelName":"buffalo_l"}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.detectFaces (/usr/src/app/server/dist/repositories/machine-learning.repository.js:126:26)
+    at async PersonService.handleDetectFaces (/usr/src/app/server/dist/services/person.service.js:243:52)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:13 PM   ERROR [Microservices:{"source":"upload","id":"45ff1421-dbc4-41fc-991a-dd53e973cc8f"}] Unable to run job handler (Ocr): Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+41:[Nest] 7  - 01/04/2026, 5:42:13 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+[Nest] 7  - 01/04/2026, 5:42:16 PM   ERROR [Microservices:{"source":"upload","id":"e351d03c-a7c2-4c5f-bb70-d64fe629266f"}] Unable to run job handler (Ocr): Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+Error: Machine learning request '{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}' failed for all URLs
+42:[Nest] 7  - 01/04/2026, 5:42:16 PM    WARN [Microservices:MachineLearningRepository] Machine learning request to "http://192.168.2.17:3003" failed: fetch failed
+    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.66.0/node_modules/bullmq/dist/cjs/classes/worker.js:566:32
+Query failed : {
+  durationMs: 2.690657138824463,
+  error: PostgresError: duplicate key value violates unique constraint "UQ_assets_owner_checksum"
+      at ErrorResponse (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:794:26)
+      at handle (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:480:6)
+      at Socket.data (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:315:9)
+      at Socket.emit (node:events:518:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key ("ownerId", checksum)=(7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62, \\xaeb170d26f9cb3c06dce86143bb938658a9506e6) already exists.',
+    schema_name: 'public',
+    table_name: 'asset',
+    constraint_name: 'UQ_assets_owner_checksum',
+    file: 'nbtinsert.c',
+    line: '663',
+    routine: '_bt_check_unique'
+  },
+  sql: 'insert into "asset" ("ownerId", "libraryId", "checksum", "originalPath", "deviceAssetId", "deviceId", "fileCreatedAt", "fileModifiedAt", "localDateTime", "type", "isFavorite", "duration", "visibility", "originalFileName") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) returning *',
+  params: [
+    '7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62',
+    null,
+    <Buffer ae b1 70 d2 6f 9c b3 c0 6d ce 86 14 3b b9 38 65 8a 95 06 e6>,
+    '/usr/src/app/upload/upload/7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62/ca/30/ca30a1a8-420a-4c47-b306-ca80b377cbb2.MOV',
+    '0305E8AD-4923-400C-ACF4-01146A1150F9/L0/001',
+    'ed8ac3906de16b5c60e290c3fedf1ceaf236365f3ef8825ad39659ce7875d38b',
+    2026-01-04T17:36:13.000Z,
+    2026-01-04T17:36:29.000Z,
+    2026-01-04T17:36:13.000Z,
+    'VIDEO',
+    false,
+    '0',
+    'timeline',
+    'IMG_0021.MOV'
+  ]
+}
+Query failed : {
+  durationMs: 4.135595083236694,
+  error: PostgresError: duplicate key value violates unique constraint "UQ_assets_owner_checksum"
+      at ErrorResponse (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:794:26)
+      at handle (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:480:6)
+      at Socket.data (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:315:9)
+      at Socket.emit (node:events:518:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key ("ownerId", checksum)=(7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62, \\x244eb1d960b87dea4c7b93c1270bfdecf72b60ba) already exists.',
+    schema_name: 'public',
+    table_name: 'asset',
+    constraint_name: 'UQ_assets_owner_checksum',
+    file: 'nbtinsert.c',
+    line: '663',
+    routine: '_bt_check_unique'
+  },
+  sql: 'insert into "asset" ("ownerId", "libraryId", "checksum", "originalPath", "deviceAssetId", "deviceId", "fileCreatedAt", "fileModifiedAt", "localDateTime", "type", "isFavorite", "duration", "visibility", "originalFileName") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) returning *',
+  params: [
+    '7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62',
+    null,
+    <Buffer 24 4e b1 d9 60 b8 7d ea 4c 7b 93 c1 27 0b fd ec f7 2b 60 ba>,
+    '/usr/src/app/upload/upload/7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62/6a/35/6a355e1f-42c5-4427-b9b3-a83e111d22e2.MOV',
+    'F0695298-1595-4BA3-BF39-3BB761E65896/L0/001',
+    'ed8ac3906de16b5c60e290c3fedf1ceaf236365f3ef8825ad39659ce7875d38b',
+    2026-01-04T17:36:07.000Z,
+    2026-01-04T17:36:31.000Z,
+    2026-01-04T17:36:07.000Z,
+    'VIDEO',
+    false,
+    '0',
+    'timeline',
+    'IMG_0020.MOV'
+  ]
+}
+Query failed : {
+  durationMs: 2.0313880443573,
+  error: PostgresError: duplicate key value violates unique constraint "UQ_assets_owner_checksum"
+      at ErrorResponse (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:794:26)
+      at handle (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:480:6)
+      at Socket.data (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:315:9)
+      at Socket.emit (node:events:518:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key ("ownerId", checksum)=(7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62, \\xc4cc2c193cad8fa9ba2464a2189da185e9bc7051) already exists.',
+    schema_name: 'public',
+    table_name: 'asset',
+    constraint_name: 'UQ_assets_owner_checksum',
+    file: 'nbtinsert.c',
+    line: '663',
+    routine: '_bt_check_unique'
+  },
+  sql: 'insert into "asset" ("ownerId", "libraryId", "checksum", "originalPath", "deviceAssetId", "deviceId", "fileCreatedAt", "fileModifiedAt", "localDateTime", "type", "isFavorite", "duration", "visibility", "livePhotoVideoId", "originalFileName") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) returning *',
+  params: [
+    '7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62',
+    null,
+    <Buffer c4 cc 2c 19 3c ad 8f a9 ba 24 64 a2 18 9d a1 85 e9 bc 70 51>,
+    '/usr/src/app/upload/upload/7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62/37/b8/37b82698-13a0-46ff-8511-1a8944885501.HEIC',
+    '0305E8AD-4923-400C-ACF4-01146A1150F9/L0/001',
+    'ed8ac3906de16b5c60e290c3fedf1ceaf236365f3ef8825ad39659ce7875d38b',
+    2026-01-04T17:36:13.000Z,
+    2026-01-04T17:36:29.000Z,
+    2026-01-04T17:36:13.000Z,
+    'IMAGE',
+    false,
+    '0',
+    'timeline',
+    '0523e552-922a-4283-86e6-a554c8812378',
+    'IMG_0021.HEIC'
+  ]
+}
+Query failed : {
+  durationMs: 5.274593114852905,
+  error: PostgresError: duplicate key value violates unique constraint "UQ_assets_owner_checksum"
+      at ErrorResponse (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:794:26)
+      at handle (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:480:6)
+      at Socket.data (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:315:9)
+      at Socket.emit (node:events:518:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key ("ownerId", checksum)=(7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62, \\xaeb170d26f9cb3c06dce86143bb938658a9506e6) already exists.',
+    schema_name: 'public',
+    table_name: 'asset',
+    constraint_name: 'UQ_assets_owner_checksum',
+    file: 'nbtinsert.c',
+    line: '663',
+    routine: '_bt_check_unique'
+  },
+  sql: 'insert into "asset" ("ownerId", "libraryId", "checksum", "originalPath", "deviceAssetId", "deviceId", "fileCreatedAt", "fileModifiedAt", "localDateTime", "type", "isFavorite", "duration", "visibility", "originalFileName") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) returning *',
+  params: [
+    '7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62',
+    null,
+    <Buffer ae b1 70 d2 6f 9c b3 c0 6d ce 86 14 3b b9 38 65 8a 95 06 e6>,
+    '/usr/src/app/upload/upload/7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62/a5/20/a5206962-164d-4aad-b58b-b8e264bfd583.MOV',
+    '0305E8AD-4923-400C-ACF4-01146A1150F9/L0/001',
+    'ed8ac3906de16b5c60e290c3fedf1ceaf236365f3ef8825ad39659ce7875d38b',
+    2026-01-04T17:36:13.000Z,
+    2026-01-04T17:36:29.000Z,
+    2026-01-04T17:36:13.000Z,
+    'VIDEO',
+    false,
+    '0',
+    'timeline',
+    'IMG_0021.MOV'
+  ]
+}
+Query failed : {
+  durationMs: 8.133490085601807,
+  error: PostgresError: duplicate key value violates unique constraint "UQ_assets_owner_checksum"
+      at ErrorResponse (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:794:26)
+      at handle (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:480:6)
+      at Socket.data (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:315:9)
+      at Socket.emit (node:events:518:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key ("ownerId", checksum)=(7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62, \\x9574e639aaacd0bd51c23b4b993be9e9f55ce2e8) already exists.',
+    schema_name: 'public',
+    table_name: 'asset',
+    constraint_name: 'UQ_assets_owner_checksum',
+    file: 'nbtinsert.c',
+    line: '663',
+    routine: '_bt_check_unique'
+  },
+  sql: 'insert into "asset" ("ownerId", "libraryId", "checksum", "originalPath", "deviceAssetId", "deviceId", "fileCreatedAt", "fileModifiedAt", "localDateTime", "type", "isFavorite", "duration", "visibility", "livePhotoVideoId", "originalFileName") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) returning *',
+  params: [
+    '7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62',
+    null,
+    <Buffer 95 74 e6 39 aa ac d0 bd 51 c2 3b 4b 99 3b e9 e9 f5 5c e2 e8>,
+    '/usr/src/app/upload/upload/7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62/69/b0/69b0506a-e110-4054-93a6-6bd17cc936dd.HEIC',
+    'F0695298-1595-4BA3-BF39-3BB761E65896/L0/001',
+    'ed8ac3906de16b5c60e290c3fedf1ceaf236365f3ef8825ad39659ce7875d38b',
+    2026-01-04T17:36:07.000Z,
+    2026-01-04T17:36:31.000Z,
+    2026-01-04T17:36:07.000Z,
+    'IMAGE',
+    false,
+    '0',
+    'timeline',
+    'b8c27150-e237-4169-8047-b9d0a47b5281',
+    'IMG_0020.HEIC'
+  ]
+}
+Query failed : {
+  durationMs: 1.8119280338287354,
+  error: PostgresError: duplicate key value violates unique constraint "UQ_assets_owner_checksum"
+      at ErrorResponse (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:794:26)
+      at handle (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:480:6)
+      at Socket.data (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:315:9)
+      at Socket.emit (node:events:518:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key ("ownerId", checksum)=(7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62, \\x244eb1d960b87dea4c7b93c1270bfdecf72b60ba) already exists.',
+    schema_name: 'public',
+    table_name: 'asset',
+    constraint_name: 'UQ_assets_owner_checksum',
+    file: 'nbtinsert.c',
+    line: '663',
+    routine: '_bt_check_unique'
+  },
+  sql: 'insert into "asset" ("ownerId", "libraryId", "checksum", "originalPath", "deviceAssetId", "deviceId", "fileCreatedAt", "fileModifiedAt", "localDateTime", "type", "isFavorite", "duration", "visibility", "originalFileName") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) returning *',
+  params: [
+    '7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62',
+    null,
+    <Buffer 24 4e b1 d9 60 b8 7d ea 4c 7b 93 c1 27 0b fd ec f7 2b 60 ba>,
+    '/usr/src/app/upload/upload/7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62/6e/9a/6e9a1885-43e5-4a78-9928-61eec54eb046.MOV',
+    'F0695298-1595-4BA3-BF39-3BB761E65896/L0/001',
+    'ed8ac3906de16b5c60e290c3fedf1ceaf236365f3ef8825ad39659ce7875d38b',
+    2026-01-04T17:36:07.000Z,
+    2026-01-04T17:36:31.000Z,
+    2026-01-04T17:36:07.000Z,
+    'VIDEO',
+    false,
+    '0',
+    'timeline',
+    'IMG_0020.MOV'
+  ]
+}
+[Nest] 23  - 01/04/2026, 5:42:19 PM   ERROR [Api:AssetMediaService~02uxdd17] Error uploading file BadRequestException: Live photo video must be a video
+BadRequestException: Live photo video must be a video
+    at onBeforeLink (/usr/src/app/server/dist/utils/asset.util.js:105:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async AssetMediaService.uploadAsset (/usr/src/app/server/dist/services/asset-media.service.js:98:17)
+    at async AssetMediaController.uploadAsset (/usr/src/app/server/dist/controllers/asset-media.controller.js:40:29)
+Query failed : {
+  durationMs: 2.085468053817749,
+  error: PostgresError: duplicate key value violates unique constraint "UQ_assets_owner_checksum"
+      at ErrorResponse (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:794:26)
+      at handle (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:480:6)
+      at Socket.data (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:315:9)
+      at Socket.emit (node:events:518:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key ("ownerId", checksum)=(7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62, \\x9574e639aaacd0bd51c23b4b993be9e9f55ce2e8) already exists.',
+    schema_name: 'public',
+    table_name: 'asset',
+    constraint_name: 'UQ_assets_owner_checksum',
+    file: 'nbtinsert.c',
+    line: '663',
+    routine: '_bt_check_unique'
+  },
+  sql: 'insert into "asset" ("ownerId", "libraryId", "checksum", "originalPath", "deviceAssetId", "deviceId", "fileCreatedAt", "fileModifiedAt", "localDateTime", "type", "isFavorite", "duration", "visibility", "livePhotoVideoId", "originalFileName") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) returning *',
+  params: [
+    '7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62',
+    null,
+    <Buffer 95 74 e6 39 aa ac d0 bd 51 c2 3b 4b 99 3b e9 e9 f5 5c e2 e8>,
+    '/usr/src/app/upload/upload/7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62/47/d7/47d72d5e-c16e-4906-a719-095b4e8c6014.HEIC',
+    'F0695298-1595-4BA3-BF39-3BB761E65896/L0/001',
+    'ed8ac3906de16b5c60e290c3fedf1ceaf236365f3ef8825ad39659ce7875d38b',
+    2026-01-04T17:36:07.000Z,
+    2026-01-04T17:36:31.000Z,
+    2026-01-04T17:36:07.000Z,
+    'IMAGE',
+    false,
+    '0',
+    'timeline',
+    'b8c27150-e237-4169-8047-b9d0a47b5281',
+    'IMG_0020.HEIC'
+  ]
+}
+Query failed : {
+  durationMs: 1.4862780570983887,
+  error: PostgresError: duplicate key value violates unique constraint "UQ_assets_owner_checksum"
+      at ErrorResponse (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:794:26)
+      at handle (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:480:6)
+      at Socket.data (/usr/src/app/server/node_modules/.pnpm/postgres@3.4.7/node_modules/postgres/cjs/src/connection.js:315:9)
+      at Socket.emit (node:events:518:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key ("ownerId", checksum)=(7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62, \\xc4cc2c193cad8fa9ba2464a2189da185e9bc7051) already exists.',
+    schema_name: 'public',
+    table_name: 'asset',
+    constraint_name: 'UQ_assets_owner_checksum',
+    file: 'nbtinsert.c',
+    line: '663',
+    routine: '_bt_check_unique'
+  },
+  sql: 'insert into "asset" ("ownerId", "libraryId", "checksum", "originalPath", "deviceAssetId", "deviceId", "fileCreatedAt", "fileModifiedAt", "localDateTime", "type", "isFavorite", "duration", "visibility", "livePhotoVideoId", "originalFileName") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) returning *',
+  params: [
+    '7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62',
+    null,
+    <Buffer c4 cc 2c 19 3c ad 8f a9 ba 24 64 a2 18 9d a1 85 e9 bc 70 51>,
+    '/usr/src/app/upload/upload/7f15ba6a-7d4e-4b56-9478-0e81ca2a5f62/bc/da/bcda27d3-eec1-4bc5-9689-814e8ddc8bb2.HEIC',
+    '0305E8AD-4923-400C-ACF4-01146A1150F9/L0/001',
+    'ed8ac3906de16b5c60e290c3fedf1ceaf236365f3ef8825ad39659ce7875d38b',
+    2026-01-04T17:36:13.000Z,
+    2026-01-04T17:36:29.000Z,
+    2026-01-04T17:36:13.000Z,
+    'IMAGE',
+    false,
+    '0',
+    'timeline',
+    '0523e552-922a-4283-86e6-a554c8812378',
+    'IMG_0021.HEIC'
+  ]
+}
+ronak-admin@ronika-nas:~$ 
