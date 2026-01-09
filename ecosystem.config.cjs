@@ -12,7 +12,7 @@ module.exports = {
       max_memory_restart: '1G',
       env: {
         NODE_ENV: 'development',
-        PORT: 5000,
+        PORT: 6002,
         VITE_PORT: 6001
       },
       error_file: './logs/dev-error.log',
